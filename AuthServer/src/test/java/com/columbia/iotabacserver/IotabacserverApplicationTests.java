@@ -10,6 +10,8 @@ import com.columbia.iotabacserver.pojo.jackson_model.OpaEvalRequestBody;
 import com.columbia.iotabacserver.pojo.jackson_model.OpaEvalRequestBodyOld;
 import com.columbia.iotabacserver.pojo.jackson_model.RuleJsonModel;
 import com.columbia.iotabacserver.pojo.request.AuthRequest;
+import com.columbia.iotabacserver.pojo.request.AuthRequestSecure;
+import com.columbia.iotabacserver.pojo.request.DbAuthRequest;
 import com.columbia.iotabacserver.pojo.response.AuthResponse;
 import com.columbia.iotabacserver.pojo.response.OpaEvalResponse;
 import com.columbia.iotabacserver.utils.Utils;
@@ -293,5 +295,34 @@ class IotabacserverApplicationTests {
         AuthRequest request = mapper.readValue(arContent, AuthRequest.class);
         AuthResponse response = controller.postEval(request);
         System.out.printf("decision: %s\n", response.getDecision());
+    }
+
+    @Test
+    void testDBAuth() throws JsonProcessingException {
+        AbacController controller = LocalBeanFactory.getBean(AbacController.class);
+        String arFile = "classpath:samples\\authorize_aster_1.txt";
+        String arContent = null;
+        try {
+            File file = ResourceUtils.getFile(arFile);
+            arContent = Files.readString(file.toPath());
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new RuntimeException();
+        }
+        ObjectMapper mapper = new ObjectMapper();
+        AuthRequestSecure request = mapper.readValue(arContent, AuthRequestSecure.class);
+        // 2nd time req
+        AuthResponse response = controller.postEvalSecure(request);
+        System.out.printf("decision: %s\n", response.getDecision());
+    }
+
+    @Test
+    void testInsertPermInfo() throws JsonProcessingException {
+        AuthzMapper mapper = LocalBeanFactory.getBean(AuthzMapper.class);
+        String userId = "Bob";
+        String tableName = "user_attrs";
+        String startTime = "1989-06-04";
+        mapper.insertPermInfo(userId, tableName, startTime);
+        System.out.printf("Inserted row for %s %s\n", userId, tableName);
     }
 }

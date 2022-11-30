@@ -58,4 +58,20 @@ public interface AuthzMapper {
             "#{token}, #{attrs})")
     @Options(useGeneratedKeys = true)
     void insertDevInfoFull(DevInfoPojo pojo);
+
+    @Insert("INSERT INTO db_access(user_id, tbl_name, db_access_date, db_deny_date) VALUES(#{userId}, #{tableName}, #{startTime}, #{startTime})")
+    @Options(useGeneratedKeys = true)    
+    void insertPermInfo(@Param("userId") String userId, @Param("tableName") String tableName, @Param("startTime") String startTime);
+
+    @Select("SELECT user_id AS userId, db_access_date AS allowDate FROM db_access WHERE user_id=#{userId} AND tbl_name=#{tableName} LIMIT 1")
+    DBAccessPermPojo findAccessDate(String userId, String tableName);
+
+    @Select("SELECT user_id AS userId, db_deny_date AS denyDate FROM db_access WHERE user_id=#{userId} AND tbl_name=#{tableName} LIMIT 1")
+    DBAccessPermPojo findDenyDate(String userId, String tableName);
+
+    @Update("UPDATE db_access SET db_access_date=#{pojo.allowDate} WHERE user_id=#{pojo.userId} AND tbl_name=#{pojo.tableName}")
+    void updateSecureDBAllow(@Param("pojo") DBAccessPermPojo pojo);
+
+    @Update("UPDATE db_access SET db_deny_date=#{pojo.denyDate} WHERE user_id=#{pojo.userId} AND tbl_name=#{pojo.tableName}")
+    void updateSecureDBDeny(@Param("pojo") DBAccessPermPojo pojo);
 }
