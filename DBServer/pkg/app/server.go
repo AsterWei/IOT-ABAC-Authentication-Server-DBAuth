@@ -15,10 +15,11 @@ type Server struct {
 	router     *gin.Engine
 	conn       *sql.DB
 	allow_once map[Mapkey]bool
+	deny_once  map[Mapkey]bool
 }
 
 func NewServer(router *gin.Engine, conn *sql.DB) *Server {
-	return &Server{router: router, conn: conn}
+	return &Server{router: router, conn: conn, allow_once: make(map[Mapkey]bool), deny_once: make(map[Mapkey]bool)}
 }
 
 func (s *Server) Run() error {

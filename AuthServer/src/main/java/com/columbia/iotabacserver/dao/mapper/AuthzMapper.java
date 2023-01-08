@@ -28,8 +28,8 @@ public interface AuthzMapper {
             "action=#{pojo.action}")
     void updateObjectHierarchy(ObjectHierarchyPojo pojo);
 
-//     @Select("SELECT user_id AS userId, attrs FROM user_attrs WHERE user_id=#{userId} LIMIT 1")
-//     UserAttrsPojo findUserAttrs(String userId);
+    @Select("SELECT user_id AS userId, attrs FROM user_attrs WHERE user_id=#{userId} LIMIT 1")
+    UserAttrsPojo findUserAttrs(String userId);
 
     @Insert("INSERT INTO user_attrs(user_id, pwd, attrs) VALUES(#{userId}, #{password}, #{attrs})")
     @Options(useGeneratedKeys = true)

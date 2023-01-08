@@ -84,8 +84,8 @@ public class LocalHttpServer {
 
                     if(request.getSecured().equals("true")) {
                         System.out.println("Try secure request");
-
-                        CloseableHttpResponse sendJWTResponse = ClientService.sendJwtToken(context.getClient(), "Aster", "123", request.getDbAuth());
+                        String client_signature = "JWTsignature123";
+                        CloseableHttpResponse sendJWTResponse = ClientService.sendJwtToken(context.getClient(), request.getUsername(), client_signature, request.getDbAuth());
                         System.out.println(EntityUtils.toString(sendJWTResponse.getEntity(), "UTF-8"));
                         if(sendJWTResponse.getStatusLine().getStatusCode() != 200) {
                             String jwtResponseBodyStr = EntityUtils.toString(sendJWTResponse.getEntity(), "UTF-8");

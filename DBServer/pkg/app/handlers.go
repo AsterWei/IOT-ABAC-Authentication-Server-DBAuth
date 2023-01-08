@@ -49,7 +49,7 @@ func (s *Server) FindUserAttrs() gin.HandlerFunc { //don't have enough permissio
 		var result UserAttrs
 
 		if res.Next() {
-			if err := res.Scan(&result.User_id, &result.Attrs); err != nil {
+			if err := res.Scan(&result.User_id, &result.Password, &result.Attrs); err != nil {
 				fmt.Printf("scan err: %v\n", err)
 				context.JSON(http.StatusBadRequest, nil)
 				return
@@ -366,10 +366,10 @@ func (s *Server) SendJWT() gin.HandlerFunc {
 		json.Unmarshal(reqBody, &reqdata)
 		tokenString := reqdata.ClientMessage
 
-		testkey := "12345"
+		db_signature := "JWTsignature123"
 		parts := strings.Split(tokenString, ".")
 		method := jwt.GetSigningMethod("HS256")
-		err2 := method.Verify(strings.Join(parts[0:2], "."), parts[2], []byte(testkey))
+		err2 := method.Verify(strings.Join(parts[0:2], "."), parts[2], []byte(db_signature))
 		if err2 != nil {
 			fmt.Printf("Error while verifying key: %v", err2)
 		} else {
@@ -381,7 +381,7 @@ func (s *Server) SendJWT() gin.HandlerFunc {
 			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 				return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
 			}
-			return []byte(testkey), nil
+			return []byte(db_signature), nil
 		})
 
 		if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
@@ -454,6 +454,9 @@ func (s *Server) accessDateUpdate(user_id string, dbauth string) { //given db_au
 			if err != nil {
 				days = 0
 			}
+		}
+		if days == 0 {
+			continue
 		}
 		// fmt.Println(days)
 		if strings.Contains(element, "allow") {
@@ -545,7 +548,7 @@ func (s *Server) checkAuthServerPerm(user_id string, tbl_name string) bool {
 		return false
 	}
 
-	fmt.Printf("actions: %+v\n", result)
+	fmt.Printf("db perm: %+v\n", result)
 	allowdate, _ := time.Parse("2006-01-02", result.Db_access_date)
 	if time.Now().Before(allowdate) {
 		return true

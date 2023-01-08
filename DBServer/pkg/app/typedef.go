@@ -1,8 +1,9 @@
 package app
 
 type UserAttrs struct {
-	User_id string `json:"user_id"`
-	Attrs   string `json:"attrs"`
+	User_id  string `json:"user_id"`
+	Password string `json:"password"`
+	Attrs    string `json:"attrs"`
 }
 
 type DevAttrs struct {
@@ -124,7 +125,7 @@ const (
 	FindHierarchyQuery         = "SELECT obj_id, action, hierarchy FROM object_action_policy_hierarchy WHERE obj_id=? AND action=? LIMIT 1"
 	InsertObjectHierarchyQuery = "INSERT INTO object_action_policy_hierarchy(obj_id, action, hierarchy) VALUES(?, ?, ?)"
 	UpdateObjectHierarchyQuery = "UPDATE object_action_policy_hierarchy SET hierarchy=? WHERE obj_id=? AND action=?"
-	FindUserAttrsQuery         = "SELECT user_id, attrs FROM user_attrs WHERE user_id=? LIMIT 1"
+	FindUserAttrsQuery         = "SELECT user_id, pwd, attrs FROM user_attrs WHERE user_id=? LIMIT 1"
 	InsertUserAttrsQuery       = "INSERT INTO user_attrs(user_id, pwd, attrs) VALUES(?, ?, ?)"
 	UpdateUserAttrsQuery       = "UPDATE user_attrs SET attrs=? WHERE user_id=?"
 	FindUserCheckInfoQuery     = "SELECT user_id, pwd FROM user_attrs WHERE user_id=? LIMIT 1"

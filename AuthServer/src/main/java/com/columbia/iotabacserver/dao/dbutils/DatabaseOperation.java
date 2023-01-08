@@ -52,7 +52,8 @@ public class DatabaseOperation {
         HttpURLConnection con = (HttpURLConnection) obj.openConnection();
 		con.setRequestMethod("GET");
 		int responseCode = con.getResponseCode();
-		System.out.println("GET Response Code :: " + responseCode);
+		System.out.println("GET Response Code :: " + responseCode );
+		UserAttrsPojo pojo = new UserAttrsPojo();
 		if (responseCode == HttpURLConnection.HTTP_OK) { // success
 			BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
 			String inputLine;
@@ -68,9 +69,9 @@ public class DatabaseOperation {
             jsonString = response.toString();
 		} else {
 			System.out.println("GET request did not work.");
-            jsonString =  "";
+            // jsonString =  "";
+			return pojo;
 		}
-        UserAttrsPojo pojo;
         ObjectMapper objmapper = new ObjectMapper();
         pojo = objmapper.readValue(jsonString, UserAttrsPojo.class);
         return pojo;

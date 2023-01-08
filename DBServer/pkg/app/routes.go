@@ -19,7 +19,7 @@ func (s *Server) Routes() *gin.Engine {
 
 	// router.POST("/test", s.DBTest())
 
-	v5 := router.Group("/find_uesr_attrs")
+	v5 := router.Group("/find_user_attrs")
 	{
 		v5.GET("/:id", s.FindUserAttrs())
 	}
